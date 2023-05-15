@@ -19,6 +19,20 @@ async function registerUser(req, res) {
     }
 }
 
+async function login (req, res) {
+    try {
+        console.log (res.status(200).send({
+            message: "Successfully logged in",
+            user: req.body.username
+        }))
+    } catch (error) {
+        console.log(error)
+        res.status(501).send({
+            message: error.message
+        })
+    }
+}
+
 module.exports = {
-    registerUser
+    registerUser, login
 }

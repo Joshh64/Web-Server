@@ -2,17 +2,17 @@ const express = require("express")
 require("dotenv").config()
 const app = express();
 const port = process.env.PORT
-const userRouter = require("./users/model")
+const userRouter = require("./users/routes")
 
 app.use(express.json())
-
-app.use(userRouter)
 
 app.get("/health", (req, res) => {
     res.status(200).send({
         message: "API is working"
     })
 })
+
+app.use(userRouter)
 
 const checkConnection = require("./db/connection")
 console.log(checkConnection)

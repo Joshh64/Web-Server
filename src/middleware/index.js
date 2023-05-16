@@ -1,46 +1,72 @@
 const bcrypt = require("bcrypt")
 const User = require("../users/model")
 
-// async function timeNow(req, res, next) { // middleware needs three parameters
-//     console.log ('Time:', Date.now())
-//     next()
-// }
 
-// async function helloWorld (req, res, next) {
-//     console.log ("Hello World")
-//     next()
-// }
-
-// async function modBody (req, res, next) {
-//     req.body.username = req.body.username + "modded"
-// }
-
-async function hashThePassword (req, res, next) {
-    const hashedPassword = await bcrypt.hash(req.body.password, parseInt(process.env.SALT_ROUNDS))
-    req.body.password = hashedPassword
-    next()
+// Middleware Functions
+async function hashThePassword(req, res, next) {
+    try {
+        req.body.password = await bcrypt.hash(req.body.password, 10) // code to hash password
+        next()
+    } catch (error) {
+        console.log(error)
+        res.status(500).send({
+            error: error.message
+        })
+    }
 }
 
-async function comparePasswords (req, res, next) {
-    userEntry = await User.findOne({username: req.body.username})
-    console.log(userEntry)
 
-    const compareCheck = await bcrypt.compare(req.body.password, userEntry.password)
-    console.log(compareCheck)
-
-    if(compareCheck == false) {
+async function comparePasswords(req, res, next) {
+    try {
+        console.log(req.body.password)
+        // req.body.password with the hashed password that we've stored in the database
+        
+        // the hashed version from the database to compare the plain text version with the hashed password
+        let userInfo = await User.findOne({
+            username: req.body.username
+        })
+        console.log(userInfo) 
+        
+        // compare the plain text password with the hashed password stored in the database
+        if(userInfo && await bcrypt.compare(req.body.password, userInfo.password)) {
+            console.log("User found in our database and passwords")
+            next()
+        } else {
+            throw new Error ("username or password incorrect")
+        }
+    } catch (error) {
+        console.log(error)
         res.status(500).send({
-            message: "Passwords do not match"
+            error: error.message
         })
-    } else {
-        res.status(200).send({
-            message: "Passwords match"
-        })
-        next()
+    }
+}
+
+function validateEmail(email) {
+    // Use a regular expression to check if the email contains the "@" sign
+    const emailRegex = /^.+@.+\..+$/;
+    return emailRegex.test(email);
+}
+
+function validateUserEmail(req, res, next) {
+    try {
+        const { email } = req.body;
+
+        if (!validateEmail(email)) {
+            throw new Error("Invalid email format");
+        }
+
+        next();
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            error: error.message
+        });
     }
 }
 
 module.exports = {
-    // timeNow, helloWorld, modBody
-    hashThePassword, comparePasswords
-}
+    hashThePassword,
+    comparePasswords,
+    validateUserEmail
+};

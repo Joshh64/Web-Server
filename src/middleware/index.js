@@ -5,15 +5,17 @@ const jwt = require("jsonwebtoken")
 
 // Middleware Functions
 async function hashThePassword(req, res, next) {
-    try {
-        req.body.password = await bcrypt.hash(req.body.password, 10) // code to hash password
-        next()
-    } catch (error) {
-        console.log(error)
-        res.status(500).send({
-            error: error.message
-        })
-    }
+  try {
+    const salt = await bcrypt.genSalt(10); // Generate a salt value
+    const hashedPassword = await bcrypt.hash(req.body.password, salt); // Hash the password with the generated salt
+    req.body.password = hashedPassword;
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      error: error.message
+    });
+  }
 }
 
 

@@ -1,8 +1,12 @@
 const express = require("express")
+const cors = require("cors")
 require("dotenv").config()
 const app = express();
 const port = process.env.PORT
 const userRouter = require("./users/routes")
+const movieRouter = require("./movies/routes")
+
+app.use(cors()) // enable requests from any orign
 
 app.use(express.json())
 
@@ -13,6 +17,8 @@ app.get("/health", (req, res) => {
 })
 
 app.use(userRouter)
+
+app.use(movieRouter)
 
 const checkConnection = require("./db/connection")
 console.log(checkConnection)

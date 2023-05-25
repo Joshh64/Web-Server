@@ -19,7 +19,7 @@ const addMovie = async (req, res) => {
 
 const getAllMovies = async (req, res) => {
     try {
-        const findMovie = await Movie.findAll() // locates book user wanted to find
+        const findMovie = await Movie.find({}) // locates book user wanted to find
         
         res.status(200).json ({
             message: "Movies successfully found! Displaying list of currently logged movies",

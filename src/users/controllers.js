@@ -20,8 +20,19 @@ async function registerUser(req, res) {
     }
 }
 
-async function login (req, res) {
+async function login(req, res) {
     try {
+        if (req.authUser) {
+            res.status(200).send({
+                message: "success",
+                user: {
+                    username: req.authUser.username,
+                    email: req.authUser.email
+                }
+            });
+            return;
+        }
+
         // to generate a token we need 1 bits of information: the secret key and the user id
         // user id can be accessed from the req.userInfo object
         const token = await jwt.sign({

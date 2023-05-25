@@ -5,7 +5,8 @@ const {hashThePassword, comparePasswords, validateUserEmail, tokenCheck} = requi
 
 userRouter.post("/users/register", hashThePassword, validateUserEmail, registerUser);
 userRouter.post("/users/login", comparePasswords, login)
-userRouter.get("/users/readUsers", tokenCheck, readUsers)
+userRouter.get("/users/readUsers", readUsers)
+userRouter.get("/users/authCheck", tokenCheck, login)
 userRouter.put("/users/updateUser", hashThePassword, updateUser)
 userRouter.delete("/users/deleteUser", deleteUser)
 

@@ -2,7 +2,7 @@ const express = require("express")
 const cors = require("cors")
 require("dotenv").config()
 const app = express();
-const port = process.env.PORT
+const port = process.env.PORT || 5002
 const userRouter = require("./users/routes")
 const movieRouter = require("./movies/routes")
 
